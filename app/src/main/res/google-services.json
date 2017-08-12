@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1081116903401",
+    "project_id": "my-music-cb1f1"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081116903401:android:b10b1531b8dec6aa",
+        "android_client_info": {
+          "package_name": "com.mymusic.www.mymusic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1081116903401-l5d6tqoco5lqk1egspcepc4pumr26jk5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mymusic.www.mymusic",
+            "certificate_hash": "525e8330ad85bc43b6e8d7302f80edf0b08ba9fd"
+          }
+        },
+        {
+          "client_id": "1081116903401-hf87nigjck58gnvh1j3ihbbd1q36qfu4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRsz5sDJRiTi3p-w57p3aGS_uTKbCdP1U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
