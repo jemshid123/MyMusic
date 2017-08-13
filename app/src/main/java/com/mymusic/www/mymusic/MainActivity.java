@@ -40,9 +40,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -66,9 +71,10 @@ AlertDialog.Builder build;
     Button google,fb;
      private  static GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
-    private static final int fb_SIGN_IN = 9000;
+
     ImageView pic;
     CallbackManager callbackManager;
+
   public  static   GoogleSignInResult Result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +86,7 @@ AlertDialog.Builder build;
         fb = (Button) findViewById(R.id.fb);
         pic=(ImageView) findViewById(R.id.imageView);
         /** google signin */
+        Result=null;
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -94,14 +101,23 @@ AlertDialog.Builder build;
 
         //check if google is used to already login
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+
         if (opr.isDone()) {
             // signed in.
+               signIn();
 
-            Toast.makeText(getBaseContext(),"connected in google",Toast.LENGTH_LONG).show();
             handleSignInResult(opr.get());
-        }else
+
+
+        }else if(isLoggedInfb())
         {
-            Toast.makeText(getBaseContext(),"not connected in google",Toast.LENGTH_LONG).show();
+
+            File file=new File(getFilesDir()+"/fb.json");
+            if(file.exists())
+            {
+                startActivity(new Intent(MainActivity.this,musiclist.class));
+            }
+         
         }
         /** facebook login */
 
@@ -130,16 +146,7 @@ AlertDialog.Builder build;
         });
        //check if facebook is used to already login
 
-        if (isLoggedInfb()) {
-            // signed in. Show the "sign out" button and explanation.
 
-            Toast.makeText(getBaseContext(),"connected in facebook",Toast.LENGTH_LONG).show();
-
-
-        }else
-        {
-            Toast.makeText(getBaseContext(),"not connected in facebook",Toast.LENGTH_LONG).show();
-        }
 
 
         /** alert box initializing */
@@ -161,9 +168,9 @@ AlertDialog.Builder build;
 
 
                 try {
-                    if(isNetworkAvailable(getBaseContext()))
+                    if(true)
                     {
-signIn();
+                      signIn();
                     }else
                     {
 
@@ -252,21 +259,28 @@ return false;
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             Result=result;
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-           String name=acct.getDisplayName();
-            String id=acct.getId();
-            String email=acct.getEmail();
-            //Picasso.with(getBaseContext()).load(acct.getPhotoUrl()).into(pic);
-            Toast.makeText(getBaseContext(),name+" "+id+" "+email,Toast.LENGTH_LONG).show();
-            Toast.makeText(getBaseContext(),acct.getPhotoUrl()+" ",Toast.LENGTH_LONG).show();
+            Intent intent=new Intent(MainActivity.this,musiclist.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            getBaseContext().startActivity(intent);
+            MainActivity.this.finish();
         } else {
             // Signed out, show unauthenticated UI.
 
         }
     }
+
+    public static void revokeAccess() {
+        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                      Log.e("logout",status.toString());
+                    }
+                });
+    }
 /** facebook event handle */
-public boolean isLoggedInfb() {
+public static boolean isLoggedInfb() {
     AccessToken accessToken = AccessToken.getCurrentAccessToken();
     return accessToken != null;
 }
@@ -283,9 +297,19 @@ public boolean isLoggedInfb() {
 
 
                                 String id = response.getJSONObject().get("id").toString();
-                                getFacebookProfilePicture(id);
+                                String name=response.getJSONObject().get("name").toString();
 
-                                String email = response.getJSONObject().get("email").toString();
+                                BufferedWriter bw=new BufferedWriter(new FileWriter(getFilesDir()+"/fb.json"));
+                                bw.write(response.getRawResponse());
+                                bw.close();
+                                Bitmap bit=getFacebookProfilePicture(id);
+
+                                saveImage(bit);
+                                Intent intent=new Intent(MainActivity.this,musiclist.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                 Result=null;
+                                getBaseContext().startActivity(intent);
+                                MainActivity.this.finish();
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -306,7 +330,7 @@ public boolean isLoggedInfb() {
 
             Bitmap bitmap = null;
             imageURL = "https://graph.facebook.com/" + userID + "/picture?type=large";
-            Picasso.with(getBaseContext()).load(imageURL).into(pic);
+
 
             return bitmap;
         }catch (Exception e)
@@ -315,4 +339,23 @@ public boolean isLoggedInfb() {
             return null;
         }
     }
+
+    public boolean  saveImage(Bitmap image)
+    {
+        try {
+            // Use the compress method on the Bitmap object to write image to
+            // the OutputStream
+            FileOutputStream fos = openFileOutput(getBaseContext().getFilesDir()+"/fb.png", Context.MODE_PRIVATE);
+
+            // Writing the bitmap to the output stream
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+
+            return true;
+        } catch (Exception e) {
+            Log.e("saveToInternalStorage()", e.getMessage());
+            return false;
+        }
+    }
+
 }
