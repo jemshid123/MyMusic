@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.ActivityCompat;
@@ -16,23 +18,46 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
@@ -41,7 +66,9 @@ AlertDialog.Builder build;
     Button google,fb;
      private  static GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
+    private static final int fb_SIGN_IN = 9000;
     ImageView pic;
+    CallbackManager callbackManager;
   public  static   GoogleSignInResult Result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +92,56 @@ AlertDialog.Builder build;
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-signIn();
+        //check if google is used to already login
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()) {
+            // signed in.
+
+            Toast.makeText(getBaseContext(),"connected in google",Toast.LENGTH_LONG).show();
+            handleSignInResult(opr.get());
+        }else
+        {
+            Toast.makeText(getBaseContext(),"not connected in google",Toast.LENGTH_LONG).show();
+        }
+        /** facebook login */
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+        callbackManager= CallbackManager.Factory.create();
+
+
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+
+                 handlefbsignin(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+            }
+        });
+       //check if facebook is used to already login
+
+        if (isLoggedInfb()) {
+            // signed in. Show the "sign out" button and explanation.
+
+            Toast.makeText(getBaseContext(),"connected in facebook",Toast.LENGTH_LONG).show();
+
+
+        }else
+        {
+            Toast.makeText(getBaseContext(),"not connected in facebook",Toast.LENGTH_LONG).show();
+        }
+
+
         /** alert box initializing */
         build.setTitle("Couldn't connect");
         build.setMessage("No Internet connection");
@@ -106,8 +182,12 @@ signIn();
             @Override
             public void onClick(View v) {
                 try {
+                    Toast.makeText(getBaseContext(),"fb",Toast.LENGTH_LONG).show();
                 if(isNetworkAvailable(getBaseContext()))
                 {
+
+                    LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile", "email"));
+
 
                 }else
                 {
@@ -163,6 +243,10 @@ return false;
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
+        else
+        {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
@@ -181,5 +265,54 @@ return false;
 
         }
     }
+/** facebook event handle */
+public boolean isLoggedInfb() {
+    AccessToken accessToken = AccessToken.getCurrentAccessToken();
+    return accessToken != null;
+}
+    public void handlefbsignin(AccessToken token)
+    {
+        GraphRequest.newMeRequest(
+                token, new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject me, GraphResponse response) {
+                        if (response.getError() != null) {
+                            // handle error
+                        } else {
+                            try {
 
+
+                                String id = response.getJSONObject().get("id").toString();
+                                getFacebookProfilePicture(id);
+
+                                String email = response.getJSONObject().get("email").toString();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            // send email and id to your web server
+                            Log.e("Result1", response.getRawResponse());
+                            Log.e("Result", me.toString());
+
+                        }
+                    }
+                }).executeAsync();
+    }
+    public  Bitmap getFacebookProfilePicture(String userID)
+    {
+        try {
+            String imageURL;
+
+            Bitmap bitmap = null;
+            imageURL = "https://graph.facebook.com/" + userID + "/picture?type=large";
+            Picasso.with(getBaseContext()).load(imageURL).into(pic);
+
+            return bitmap;
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
