@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -40,13 +42,16 @@ public class musiclist extends AppCompatActivity
         setContentView(R.layout.activity_musiclist);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+          setTitle("    My Music");
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+
+        /**  accessing users profile from facebook or google. */
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
+
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -69,14 +74,40 @@ public class musiclist extends AppCompatActivity
                      Toast.makeText(getBaseContext(),acct.getDisplayName(),Toast.LENGTH_LONG).show();
 
                  }
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
+        /** adding tabs to layout musiclist activity .song is the fragment added  */
+        try {
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+            tabLayout.addTab(tabLayout.newTab().setText("songs"));
+
+            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+            final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+            final pagerAdapter adapter = new pagerAdapter
+                    (getSupportFragmentManager(), tabLayout.getTabCount());
+            viewPager.setAdapter(adapter);
+            viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    viewPager.setCurrentItem(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

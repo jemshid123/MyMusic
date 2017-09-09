@@ -116,8 +116,9 @@ AlertDialog.Builder build;
             if(file.exists())
             {
                 startActivity(new Intent(MainActivity.this,musiclist.class));
+                finish();
             }
-         
+
         }
         /** facebook login */
 
