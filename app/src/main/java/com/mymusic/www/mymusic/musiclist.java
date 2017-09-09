@@ -42,8 +42,10 @@ public class musiclist extends AppCompatActivity
         setContentView(R.layout.activity_musiclist);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-          setTitle("    My Music");
+          setTitle("     My Music");
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+
+
 
         /**  accessing users profile from facebook or google. */
 
