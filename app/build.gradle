@@ -27,6 +27,13 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    dependencies {
+        repositories {
+            mavenCentral()
+        }
+        compile 'com.sothree.slidinguppanel:library:3.3.1'
+    }
+
 
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.githang:com-phillipcalvin-iconbutton:1.0.1@aar'
@@ -35,6 +42,6 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.19.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.android.support:support-v4:23.3.0'
-
+    compile 'com.android.support:recyclerview-v7:23.3.0'
     testCompile 'junit:junit:4.12'
 }

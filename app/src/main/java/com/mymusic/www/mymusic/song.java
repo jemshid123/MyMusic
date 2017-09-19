@@ -1,27 +1,37 @@
 package com.mymusic.www.mymusic;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 
@@ -30,8 +40,10 @@ public class song extends Fragment {
     ListView songListView;
     ArrayList<String> arrayList;
     Bitmap[] thumb;
-    AlertDialog.Builder alertBuilder ;
-    AlertDialog alert;
+    ProgressDialog progressbuilder ;
+int prevSongIndex;
+    playmusic playmusicinstance;
+    private ServiceConnection mServiceConnection;
 Context context;
     public song() {
         // Required empty public constructor
@@ -41,13 +53,31 @@ Context context;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 context=getContext();
-        alertBuilder =new AlertDialog.Builder(context);
-        alertBuilder.setCancelable(false);
-        alertBuilder.setTitle("Please Wait");
-        alertBuilder.setMessage("Loading Music");
-        alertBuilder.setIcon(R.mipmap.ic_launcher);
-        alert=alertBuilder.create();
-        alert.show();
+
+        //reciver
+        mServiceConnection= new ServiceConnection() {
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                playmusic.MyBinder myBinder = (playmusic.MyBinder) service;
+                playmusicinstance =myBinder.getService();
+                Log.e("service","successfully binded");
+            }
+        };
+
+        progressbuilder =new ProgressDialog(context);
+        progressbuilder.setCancelable(false);
+        progressbuilder.setTitle("Please Wait");
+        progressbuilder.setMessage("Loading Music");
+        progressbuilder.setIcon(R.mipmap.ic_launcher);
+        progressbuilder.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+      progressbuilder.show();
+
     }
 
     @Override
@@ -57,19 +87,43 @@ context=getContext();
         View view=inflater.inflate(R.layout.fragment_song, container, false);
         songListView=(ListView)view.findViewById(R.id.songListView);
         new getMusicList().execute(songListView);
+        Intent startmusicintent=new Intent(getActivity(),playmusic.class);
+        getActivity().startService(startmusicintent);
+        binder();
         return view ;
     }
 
     public void onStart()
     {
         super.onStart();
+songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+      try {
 
+
+Intent  intent=new Intent("songstarted");
+          intent.putExtra("message","play");
+          intent.putExtra("song",position);
+          sendMessage(intent);
+           songList.process(songList.getsongs(position));
+          Toast.makeText(getContext(),songList.getTitle(),Toast.LENGTH_LONG).show();
+
+
+
+      }catch (Exception e)
+      {
+          e.printStackTrace();
+      }
+
+    }
+});
 
 
     }
 
 
-    private  class getMusicList extends AsyncTask<ListView,Void,Integer>
+    private  class getMusicList extends AsyncTask<ListView,Integer,Integer>
     {
 
 
@@ -82,10 +136,10 @@ context=getContext();
            //getting bitmaps for songs thumb
             for (String song:arrayList) {
                 songDetails=song.split(Pattern.quote("||"));
-                if(new File(songDetails[3]).exists()) {
-                    thumb[i++] = coverpicture(songDetails[3]);
+                thumb[i++] = coverpicture(songDetails[3]);
+             publishProgress(thumb.length);
 
-                }
+
             }
             Log.e(" song ", arrayList.get(1));
             return arrayList.size();
@@ -96,12 +150,23 @@ context=getContext();
             super.onPostExecute(integer);
             String[] details=arrayList.toArray(new String[arrayList.size()]);
             songListView.setAdapter(new baseadapter(context,thumb,details));
-            alert.cancel();
+            songList.putsongs(details);
+          progressbuilder.dismiss();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
+            String[] details=arrayList.toArray(new String[arrayList.size()]);
+            songListView.setAdapter(new baseadapter(context,thumb,details));
+            progressbuilder.incrementProgressBy(1);
+
         }
 
 
-
     }
+
     /** function to return list of songs */
     public ArrayList getMusic(Context context){
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
@@ -120,7 +185,7 @@ context=getContext();
                 projection,
                 selection,
                 null,
-                null);
+                MediaStore.Audio.Media.TITLE);
 
         ArrayList<String> songs = new ArrayList<String>();
         while(cursor.moveToNext()) {
@@ -131,6 +196,7 @@ context=getContext();
                     + cursor.getString(4) + "||"
                     + cursor.getString(5));
         }
+        progressbuilder.setMax(songs.size());
         return songs;
     }
 /** cover picture for music files */
@@ -138,6 +204,7 @@ context=getContext();
     public  Bitmap coverpicture(String path) {
 
             MediaMetadataRetriever mr = new MediaMetadataRetriever();
+        try{
 
             mr.setDataSource(path);
 
@@ -148,5 +215,31 @@ context=getContext();
         else
             return  null;
 
+    }catch(Exception e)
+    {
+        e.printStackTrace();
+        return null;
+    }}
+
+/**Local broadcast sender for player*/
+
+
+
+    /**Local broadcast sender for song*/
+    private void sendMessage(Intent intent) {
+
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
+
+    //binding to service
+
+
+
+    public  void binder()
+    {
+        Intent startmusicintent=new Intent(getActivity(),playmusic.class);
+        boolean i=getActivity().bindService(startmusicintent,mServiceConnection,getContext().BIND_AUTO_CREATE);
+        Log.e("service",i+" ");
+    }
+
 }
