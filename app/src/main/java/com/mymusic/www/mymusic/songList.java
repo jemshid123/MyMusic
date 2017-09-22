@@ -52,10 +52,39 @@ public  class songList {
 
         long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
-        String sec;
-        seconds=seconds%60000;
-        sec=""+seconds;
-        sec=sec.substring(0,2);
-        return minutes+":"+sec;
+        String sec=" ";
+        try {
+            seconds = seconds % 60;
+            sec = "" + seconds;
+            sec = sec.substring(0, 2);
+            return minutes + ":" + sec;
+        }catch (Exception e)
+        {
+            return minutes + ":" + sec;
+        }
+    }
+
+    public  static int getrawduration()
+    {
+        int millis=Integer.parseInt(details[5]);
+        return  millis;
+
+    }
+
+    public  static String formatduration(long millis)
+    {
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        String sec=" ";
+try {
+
+    seconds = seconds % 60;
+    sec = "" + seconds;
+    sec = sec.substring(0, 2);
+    return minutes + ":" + sec;
+}catch (Exception e)
+{
+    return minutes + ":" + sec;
+}
     }
 }

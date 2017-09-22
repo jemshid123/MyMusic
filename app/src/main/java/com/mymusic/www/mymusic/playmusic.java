@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -14,8 +15,8 @@ import android.util.Log;
 public class playmusic extends Service {
     MediaPlayer mp;
     int position;
-    private IBinder mBinder ;
     String details;
+    Handler handler;
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -27,25 +28,14 @@ public class playmusic extends Service {
         LocalBroadcastManager.getInstance(getBaseContext()).registerReceiver(mMessageReceiver,
                 new IntentFilter("songstarted"));
         mp = new MediaPlayer();
+        handler=new Handler();
     }
 
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        try {
 
-
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    stopSelf();
-                }
-            });
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
 return START_STICKY;
 
 
@@ -56,39 +46,58 @@ return START_STICKY;
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
-       return mBinder;
+       return null;
     }
-    public class MyBinder extends Binder {
-        playmusic getService() {
-            return playmusic.this;
-        }
-    }
-    private void sendMessage(String message) {
-        Log.d("sender", "Broadcasting message");
-        Intent intent = new Intent("songstarted");
-        // You can also include some extra data.
-        intent.putExtra("message", message);
-        intent.putExtra("song", position);
-        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
-    }
+
+
 
     public  void playsong(int position)
     {
+       final int p=position+1;
         try {
 
              stopsong();
-            Log.e("playsong position",position+" ");
-            Log.e("playsong "," playing");
+            this.position=position;
+            Log.e("play_music position",position+" ");
+            Log.e("playmusic_number "," playing");
             details= songList.getsongs(position);
             songList.process(details);
             mp=new MediaPlayer();
+            try {
 
+
+                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        Log.e("play_music","song completed"+p);
+                        Intent  intent=new Intent("songstarted");
+
+                        if(p<songList.songs.length) {
+                            intent.putExtra("message", "play");
+                            intent.putExtra("song", p);
+                            LocalBroadcastManager.getInstance(playmusic.this).sendBroadcast(intent);
+                        }
+                        else{
+                            intent.putExtra("message", "pause_button");
+                            intent.putExtra("song", p);
+                            LocalBroadcastManager.getInstance(playmusic.this).sendBroadcast(intent);
+                        }
+
+                    }
+                });
+
+
+
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             mp.setDataSource(songList.getPath());
 
             mp.prepare();
             mp.start();
-
+handler.postDelayed(seekbarprogress,100);
 
         }catch (Exception e)
         {
@@ -111,13 +120,43 @@ return START_STICKY;
         }
     }
 
+    public void seekPosition(int progress)
+    {
+
+
+            mp.seekTo(progress);
+Log.e("play_music","seek position changed successfully to "+progress);
+
+
+    }
+
+    /** seek bar functionality */
+
+    private Runnable seekbarprogress=new Runnable() {
+        @Override
+        public void run() {
+
+                if (mp.isPlaying()) {
+
+                    Intent intent = new Intent("songstarted");
+                    intent.putExtra("message", "seekbar_changed");
+                    intent.putExtra("progress", mp.getCurrentPosition());
+                    //  Log.e("play_music","current_seek_position send:"+mp.getCurrentPosition());
+                    LocalBroadcastManager.getInstance(playmusic.this).sendBroadcast(intent);
+                    handler.postDelayed(this, 250);
+                }
+
+        }
+    };
+
     /** local brodcast reciver */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             String message = intent.getStringExtra("message");
-            Log.e("receiver", "Got message: " + message);
+          //  Log.e("play_music", "Got message: " + message);
+
             if(message.equals("play"))
             {
                 int position=intent.getExtras().getInt("song");
@@ -125,6 +164,25 @@ return START_STICKY;
              playsong(position);
 
             }
+            else if(message.equals("seekbar_changed_manually"))
+            {
+                int position=intent.getExtras().getInt("progress");
+             seekPosition(position);
+                Log.e("play_music", "Got message: " + message+":"+position);
+            }
+            else if(message.equals("resume"))
+            {
+                if(!mp.isPlaying()) {
+                    mp.start();
+                    handler.postDelayed(seekbarprogress,100);
+                }
+            }
+            else if(message.equals("pause"))
+            {
+                if(mp.isPlaying())
+                mp.pause();
+            }
+
         }
     };
 }

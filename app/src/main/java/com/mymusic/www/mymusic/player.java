@@ -23,6 +23,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,10 +41,11 @@ import java.util.zip.Inflater;
  */
 public class player extends Fragment {
 ImageButton previous,play,next;
-    TextView songname;
+    SeekBar seekBar;
+    TextView songname,total_time,current_time;
+    int progress_prev,current_track;
 boolean musicplaying;
-    playmusic playmusicinstance;
-    private ServiceConnection mServiceConnection;
+
     public player() {
         // Required empty public constructor
     }
@@ -66,8 +68,34 @@ musicplaying=false;
         animation.setRepeatCount(1000000); // animation repeat count
         animation.setFillAfter(true);
         view.findViewById(R.id.songname).startAnimation(animation);
+        seekBar=(SeekBar) view.findViewById(R.id.seekbar);
         songname=(TextView) view.findViewById(R.id.songname);
+        total_time=(TextView)  view.findViewById(R.id.total_time);
+        current_time=(TextView)  view.findViewById(R.id.current_time);
         play=(ImageButton)view.findViewById(R.id.play);
+        previous=(ImageButton)view.findViewById(R.id.previous);
+        next=(ImageButton)view.findViewById(R.id.next);
+        /** next and previous */
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent  intent=new Intent("songstarted");
+                intent.putExtra("message","play");
+                intent.putExtra("song",++current_track);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+            }
+        });
+
+        previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent  intent=new Intent("songstarted");
+                intent.putExtra("message","play");
+                intent.putExtra("song",--current_track);
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+            }
+        });
+        /** play button */
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,21 +110,34 @@ musicplaying=false;
             }
         });
 
-        //reciver
-        mServiceConnection= new ServiceConnection() {
+
+        /** seek bar position changed */
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+int max=progress_prev+500;
+                int min=progress_prev-500;
+                Intent intent=new Intent("songstarted");
+                if((progress<min)||(progress>max)) {
+                    intent.putExtra("message", "seekbar_changed_manually");
+                    intent.putExtra("progress", progress);
+
+                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+                }
+            }
 
             @Override
-            public void onServiceDisconnected(ComponentName name) {
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
             }
 
             @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                playmusic.MyBinder myBinder = (playmusic.MyBinder) service;
-                playmusicinstance =myBinder.getService();
-                Log.e("service","successfully binded");
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
-        };
+        });
+
+
         // local brodcast reciver
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mMessageReceiver,
                 new IntentFilter("songstarted"));
@@ -108,7 +149,7 @@ musicplaying=false;
     public void onDestroy() {
         // Unregister since the activity is about to be closed.
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mMessageReceiver);
-        getActivity().unbindService(mServiceConnection);
+
         super.onDestroy();
     }
 
@@ -130,23 +171,16 @@ musicplaying=false;
 
 
 
-public  void binder()
-{
-    Intent startmusicintent=new Intent(getActivity(),playmusic.class);
-    boolean i=getActivity().bindService(startmusicintent,mServiceConnection,getContext().BIND_AUTO_CREATE);
-    Log.e("service",i+" ");
-}
 
     /** local brodcast reciver */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
+            int i;
             String message = intent.getStringExtra("message");
-            Log.e("receiver", "Got message: " + message);
-            if(message.equals("bind"))
-            binder();
-            else if(message.equals("pause"))
+          //  Log.e("player", "Got message: " + message);
+           if(message.equals("pause_button"))
             {
                 pausebuton();
             }
@@ -154,11 +188,22 @@ public  void binder()
             {
                 playbuton();
                int position=intent.getExtras().getInt("song");
-                Log.e("number2",position+" ");
-songList.process(songList.getsongs(position));
+               current_track= position;
+                Log.e("play_number",position+" ");
+                songList.process(songList.getsongs(position));
                 songname.setText(songList.getTitle());
+                total_time.setText(songList.getDuration());
+                seekBar.setMax(songList.getrawduration());
 
-            }
+            } else if(message.equals("seekbar_changed"))
+           {
+
+               i=intent.getExtras().getInt("progress");
+              Log.e("player","current_seek_position recived:"+i);
+               progress_prev=i;
+               seekBar.setProgress(i);
+               current_time.setText(songList.formatduration(i));
+           }
         }
     };
 
@@ -168,10 +213,18 @@ songList.process(songList.getsongs(position));
     {
         musicplaying=true;
         play.setImageResource(R.drawable.play);
+        Intent  intent=new Intent("songstarted");
+        intent.putExtra("message","resume");
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+
     }
     public void pausebuton()
     {
         musicplaying=false;
         play.setImageResource(R.drawable.pause);
+        Intent  intent=new Intent("songstarted");
+        intent.putExtra("message","pause");
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+
     }
 }

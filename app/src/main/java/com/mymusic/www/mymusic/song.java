@@ -41,9 +41,8 @@ public class song extends Fragment {
     ArrayList<String> arrayList;
     Bitmap[] thumb;
     ProgressDialog progressbuilder ;
-int prevSongIndex;
-    playmusic playmusicinstance;
-    private ServiceConnection mServiceConnection;
+    int prevSongIndex;
+
 Context context;
     public song() {
         // Required empty public constructor
@@ -55,20 +54,6 @@ Context context;
 context=getContext();
 
         //reciver
-        mServiceConnection= new ServiceConnection() {
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                playmusic.MyBinder myBinder = (playmusic.MyBinder) service;
-                playmusicinstance =myBinder.getService();
-                Log.e("service","successfully binded");
-            }
-        };
 
         progressbuilder =new ProgressDialog(context);
         progressbuilder.setCancelable(false);
@@ -89,7 +74,7 @@ context=getContext();
         new getMusicList().execute(songListView);
         Intent startmusicintent=new Intent(getActivity(),playmusic.class);
         getActivity().startService(startmusicintent);
-        binder();
+
         return view ;
     }
 
@@ -235,11 +220,6 @@ Intent  intent=new Intent("songstarted");
 
 
 
-    public  void binder()
-    {
-        Intent startmusicintent=new Intent(getActivity(),playmusic.class);
-        boolean i=getActivity().bindService(startmusicintent,mServiceConnection,getContext().BIND_AUTO_CREATE);
-        Log.e("service",i+" ");
-    }
+
 
 }
