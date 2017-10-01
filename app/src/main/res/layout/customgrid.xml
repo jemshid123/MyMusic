@@ -44,11 +44,13 @@
                 android:textColor="@color/button"
                 android:layout_width="480px"
                 android:layout_height="55px"
+                android:maxLines="1"
                 android:id="@+id/artist"/>
                 <TextView
                     android:textColor="@color/button"
                     android:layout_width="100px"
                     android:layout_height="55px"
+                    android:maxLines="1"
                     android:id="@+id/time"/>
         </LinearLayout>
         </LinearLayout>

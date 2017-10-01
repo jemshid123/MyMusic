@@ -10,11 +10,14 @@
     tools:context="com.mymusic.www.mymusic.musiclist"
     tools:showIn="@layout/app_bar_musiclist">
 
-   <fragment
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:name="com.mymusic.www.mymusic.song"
-       ></fragment>
+
+
+
+<fragment
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   android:name="com.mymusic.www.mymusic.carosel"/>
+
 
    <fragment
        android:layout_width="match_parent"

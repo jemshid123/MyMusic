@@ -2,6 +2,7 @@ package com.mymusic.www.mymusic;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -19,12 +23,12 @@ import java.util.ArrayList;
 
 public class baseadapter extends BaseAdapter {
     Context context;
-    Bitmap Thumb[];
+    String Thumb[];
     String name[];
     songList sl;
     LayoutInflater li;
 
-    public baseadapter(Context con,Bitmap Thumb[],String name[])
+    public baseadapter(Context con,String Thumb[],String name[])
     {
         this.context=con;
         this.Thumb=Thumb;
@@ -60,14 +64,15 @@ public class baseadapter extends BaseAdapter {
             li=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view=li.inflate(R.layout.customgrid,null);
             holder hold=new holder();
-            Bitmap bit;
+
             hold.iv=(ImageView)view.findViewById(R.id.thumb);
             hold.tv=(TextView)view.findViewById(R.id.name);
             hold.artist=(TextView)view.findViewById(R.id.artist);
             hold.tc=(TextView)view.findViewById(R.id.time) ;
-            bit=Thumb[position];
-            if(bit != null) {
-                hold.iv.setImageBitmap(bit);
+
+            if( Thumb[position] != null) {
+                Picasso.with(context).load(new File(Thumb[position])).into( hold.iv);
+
             }
             sl.process(name[position]);
 

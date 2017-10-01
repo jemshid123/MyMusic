@@ -30,6 +30,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
@@ -39,7 +41,7 @@ public class song extends Fragment {
 
     ListView songListView;
     ArrayList<String> arrayList;
-    Bitmap[] thumb;
+    String[] thumb;
     ProgressDialog progressbuilder ;
     int prevSongIndex;
 
@@ -61,7 +63,7 @@ context=getContext();
         progressbuilder.setMessage("Loading Music");
         progressbuilder.setIcon(R.mipmap.ic_launcher);
         progressbuilder.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-      progressbuilder.show();
+     // progressbuilder.show();
 
     }
 
@@ -115,18 +117,38 @@ Intent  intent=new Intent("songstarted");
         protected Integer doInBackground(ListView... lv)
         {
             int i=0;
+            String path;
+            Bitmap tempbmp;
             arrayList=getMusic(context);
-             thumb=new Bitmap[arrayList.size()];
-            String[] songDetails;
+             thumb=new String[arrayList.size()];
+
            //getting bitmaps for songs thumb
             for (String song:arrayList) {
-                songDetails=song.split(Pattern.quote("||"));
-                thumb[i++] = coverpicture(songDetails[3]);
-             publishProgress(thumb.length);
+                try {
+                    songList.process(song);
+                    path = getActivity().getFilesDir() + "/" + songList.getID();
+                    if (getpicture(path)) {
+                        thumb[i++] = path;
+                    } else {
+                        tempbmp = coverpicture(songList.getPath());
+                        if (tempbmp == null) {
+                            thumb[i++] = null;
+                        } else {
+                            savepicture(tempbmp, path);
+                            thumb[i++] = path;
+                        }
 
+
+                    }
+                    publishProgress(thumb.length);
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
 
             }
             Log.e(" song ", arrayList.get(1));
+
             return arrayList.size();
         }
 
@@ -136,7 +158,7 @@ Intent  intent=new Intent("songstarted");
             String[] details=arrayList.toArray(new String[arrayList.size()]);
             songListView.setAdapter(new baseadapter(context,thumb,details));
             songList.putsongs(details);
-          progressbuilder.dismiss();
+        //  progressbuilder.dismiss();
         }
 
         @Override
@@ -145,7 +167,7 @@ Intent  intent=new Intent("songstarted");
 
             String[] details=arrayList.toArray(new String[arrayList.size()]);
             songListView.setAdapter(new baseadapter(context,thumb,details));
-            progressbuilder.incrementProgressBy(1);
+           // progressbuilder.incrementProgressBy(1);
 
         }
 
@@ -216,10 +238,33 @@ Intent  intent=new Intent("songstarted");
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
-    //binding to service
+   /** saving cover picture as png */
+    public void savepicture(Bitmap bmp,String filename)
+    {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(filename);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+            // PNG is a lossless format, the compression factor (100) is ignored
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+/** retrive cover picture */
 
-
-
+public boolean getpicture(String filename) {
+    if (new File(filename).exists())
+        return true;
+    return false;
+}
 
 }

@@ -28,6 +28,12 @@ public  class songList {
         details=string.split(Pattern.quote("||"));
     }
 
+    public  static String getID()
+    {
+
+        return details[0];
+    }
+
     public  static String getArtist()
     {
 

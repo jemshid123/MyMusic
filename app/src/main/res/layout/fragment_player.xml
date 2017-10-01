@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bakgroundhead"
+    android:id="@+id/playerfragment"
     tools:context="com.mymusic.www.mymusic.player">
     <TextView
         android:layout_width="wrap_content"

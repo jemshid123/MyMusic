@@ -1,10 +1,12 @@
 package com.mymusic.www.mymusic;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +33,9 @@ import com.google.android.gms.common.api.Status;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+
+import devlight.io.library.ntb.NavigationTabBar;
 
 public class musiclist extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,GoogleApiClient.OnConnectionFailedListener{
@@ -44,6 +49,7 @@ public class musiclist extends AppCompatActivity
         setSupportActionBar(toolbar);
           setTitle("     My Music");
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+         /**tab setup */
 
 
 

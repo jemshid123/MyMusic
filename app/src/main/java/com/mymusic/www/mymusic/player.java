@@ -92,6 +92,7 @@ musicplaying=false;
                 Intent  intent=new Intent("songstarted");
                 intent.putExtra("message","play");
                 intent.putExtra("song",--current_track);
+
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
             }
         });
