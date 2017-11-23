@@ -60,15 +60,23 @@ public class baseadapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        try{
-            li=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view=li.inflate(R.layout.customgrid,null);
+
+            View view;
             holder hold=new holder();
+            Log.e("position",position+" "+name[position]);
+            try {
+            li=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+             view=li.inflate(R.layout.customgrid,null);
+
+
+
 
             hold.iv=(ImageView)view.findViewById(R.id.thumb);
             hold.tv=(TextView)view.findViewById(R.id.name);
             hold.artist=(TextView)view.findViewById(R.id.artist);
             hold.tc=(TextView)view.findViewById(R.id.time) ;
+
 
             if( Thumb[position] != null) {
                 Picasso.with(context).load(new File(Thumb[position])).into( hold.iv);
@@ -77,18 +85,18 @@ public class baseadapter extends BaseAdapter {
             sl.process(name[position]);
 
 
-            hold.tc.setText(sl.getDuration());
-            hold.artist.setText(sl.getArtist());
-            hold.tv.setText(sl.getTitle());
-            hold.iv.setPadding(8,8,8,8);
-            hold.iv.setCropToPadding(true);
+    hold.tc.setText(sl.getDuration());
+    hold.artist.setText(sl.getArtist());
+    hold.tv.setText(sl.getTitle());
+    hold.iv.setPadding(8, 8, 8, 8);
+    hold.iv.setCropToPadding(true);
 
-            return  view;
+      return  view;
         }catch (Exception e)
         {
-            Log.d("Error in grid adaptor",e.getMessage());
+            Log.d("Error in grid adaptor1",e.getMessage());
 
-            return  null;
+            return convertView;
         }
     }
 }

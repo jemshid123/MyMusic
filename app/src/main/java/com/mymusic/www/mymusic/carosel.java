@@ -13,8 +13,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.android.tabcarousel.CarouselContainer;
-import com.android.tabcarousel.CarouselPagerAdapter;
 
 
 
@@ -41,8 +39,8 @@ public class carosel extends Fragment {
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
 
         tabLayout.addTab(tabLayout.newTab().setText("Song"));
-        tabLayout.addTab(tabLayout.newTab().setText("PHOTO"));
-        tabLayout.addTab(tabLayout.newTab().setText("DOCUMENT"));
+       // tabLayout.addTab(tabLayout.newTab().setText("Album"));
+        //tabLayout.addTab(tabLayout.newTab().setText("Singer"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         final ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
         final pagerAdapter adapter = new pagerAdapter

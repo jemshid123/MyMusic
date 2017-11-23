@@ -88,7 +88,7 @@ songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
       try {
 
-
+songList.putsongs(songList.getsongcomplete());
 Intent  intent=new Intent("songstarted");
           intent.putExtra("message","play");
           intent.putExtra("song",position);
@@ -158,6 +158,8 @@ Intent  intent=new Intent("songstarted");
             String[] details=arrayList.toArray(new String[arrayList.size()]);
             songListView.setAdapter(new baseadapter(context,thumb,details));
             songList.putsongs(details);
+            songList.putsongscomplete(details);
+            songList.putthumbs(thumb);
         //  progressbuilder.dismiss();
         }
 
@@ -184,7 +186,8 @@ Intent  intent=new Intent("songstarted");
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.DURATION
+                MediaStore.Audio.Media.DURATION,
+
         };
 
         Cursor cursor = context.getContentResolver().query(
@@ -196,12 +199,13 @@ Intent  intent=new Intent("songstarted");
 
         ArrayList<String> songs = new ArrayList<String>();
         while(cursor.moveToNext()) {
-            songs.add(cursor.getString(0) + "||"
-                    + cursor.getString(1) + "||"
-                    + cursor.getString(2) + "||"
-                    + cursor.getString(3) + "||"
-                    + cursor.getString(4) + "||"
-                    + cursor.getString(5));
+            songs.add(cursor.getString(0) + "|@@|"
+                    + cursor.getString(1) + "|@@|"
+                    + cursor.getString(2) + "|@@|"
+                    + cursor.getString(3) + "|@@|"
+                    + cursor.getString(4) + "|@@|"
+                    + cursor.getString(5)+"|@@|"
+                    );
         }
         progressbuilder.setMax(songs.size());
         return songs;

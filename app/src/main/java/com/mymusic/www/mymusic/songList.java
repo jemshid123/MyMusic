@@ -12,8 +12,9 @@ import java.util.regex.Pattern;
  */
 
 public  class songList {
-  static String[] details,songs;
-
+  static String[] songs,songlist,temp;
+    static String thumbs[];
+   private static String[] details;
     public  static void putsongs(String[] details) {
      songs=details;
     }
@@ -21,11 +22,36 @@ public  class songList {
         return songs[i];
     }
 
+    public  static void putsongscomplete(String[] details) {
 
-    public  static void process(String string)
+        songlist=details;
+    }
 
+    public  static void putthumbs(String[] details) {
+        thumbs=details;
+    }
+
+    public  static String[] getsongcomplete()
     {
-        details=string.split(Pattern.quote("||"));
+        return songlist;
+    }
+
+    public  static boolean process(String string)
+
+    {  //Log.e("pattern error",string);
+
+        details=string.split(Pattern.quote("|@@|"));
+temp=details;
+           if(details.length != 6)
+           {
+               details=temp;
+               Log.e("pattern error",string);
+return  true;
+
+           }
+        return true;
+
+
     }
 
     public  static String getID()

@@ -3,33 +3,33 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/trending"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:title="Trending" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/recommended"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:title="Recommended" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/files"
+            android:icon="@android:drawable/ic_menu_search"
+            android:title="Files" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/history"
+            android:icon="@android:drawable/ic_menu_recent_history"
+            android:title="History" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Account">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/settings"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Settings" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/logout"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="Logout" />
         </menu>
     </item>
 

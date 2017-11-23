@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -50,6 +51,7 @@ public class musiclist extends AppCompatActivity
           setTitle("     My Music");
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
          /**tab setup */
+
 
 
 
@@ -112,6 +114,7 @@ public class musiclist extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.musiclist, menu);
+
         return true;
     }
 
@@ -124,7 +127,8 @@ public class musiclist extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            startActivity(new Intent(this,searchactivity.class));
+             return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -136,17 +140,17 @@ public class musiclist extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.trending) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.recommended) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.files) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.history) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.settings) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.logout) {
             if(MainActivity.isLoggedInfb())
             {
 

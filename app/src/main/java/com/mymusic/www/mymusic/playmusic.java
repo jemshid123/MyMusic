@@ -12,6 +12,9 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 public class playmusic extends Service {
     MediaPlayer mp;
     int position;
@@ -63,7 +66,8 @@ return START_STICKY;
             details= songList.getsongs(position);
             songList.process(details);
             mp=new MediaPlayer();
-            try {
+            mp.reset();
+
 
 
                 mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -86,21 +90,26 @@ return START_STICKY;
                     }
                 });
 
+String fp=songList.getPath();
+            File file=new File(songList.getPath());
+            FileInputStream is=new FileInputStream(file);
 
 
-            }catch (Exception e)
-            {
-                e.printStackTrace();
-            }
 
-            mp.setDataSource(songList.getPath());
+            mp.setDataSource(is.getFD());
 
             mp.prepare();
             mp.start();
+
 handler.postDelayed(seekbarprogress,100);
 
         }catch (Exception e)
         {
+
+
+
+
+            Log.e("exc",songList.getPath());
             e.printStackTrace();
         }
     }
@@ -125,7 +134,7 @@ handler.postDelayed(seekbarprogress,100);
 
 
             mp.seekTo(progress);
-Log.e("play_music","seek position changed successfully to "+progress);
+//Log.e("play_music","seek position changed successfully to "+progress);
 
 
     }
@@ -160,7 +169,7 @@ Log.e("play_music","seek position changed successfully to "+progress);
             if(message.equals("play"))
             {
                 int position=intent.getExtras().getInt("song");
-
+Log.e("play pos",songList.getsongs(position));
              playsong(position);
 
             }
@@ -168,7 +177,7 @@ Log.e("play_music","seek position changed successfully to "+progress);
             {
                 int position=intent.getExtras().getInt("progress");
              seekPosition(position);
-                Log.e("play_music", "Got message: " + message+":"+position);
+               // Log.e("play_music", "Got message: " + message+":"+position);
             }
             else if(message.equals("resume"))
             {

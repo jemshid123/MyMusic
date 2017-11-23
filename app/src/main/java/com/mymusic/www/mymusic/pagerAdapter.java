@@ -3,6 +3,7 @@ package com.mymusic.www.mymusic;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 /**
  * Created by others on 17-06-2017.
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 public class pagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
     static song tab1,tab2,tab3;
+
     public pagerAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
@@ -24,10 +26,10 @@ public class pagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-
+                Log.e("album","tab1");
                 return tab1;
             case 1:
-
+                Log.e("album","tab2");
                 return tab2;
             case 2:
 

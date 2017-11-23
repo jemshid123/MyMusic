@@ -50,8 +50,9 @@
         <service
             android:name=".playmusic"
             android:enabled="true"
-            android:exported="true"
-           ></service>
+            android:exported="true" />
+
+        <activity android:name=".searchactivity"></activity>
     </application>
 
 </manifest>
