@@ -39,7 +39,7 @@ public class carosel extends Fragment {
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
 
         tabLayout.addTab(tabLayout.newTab().setText("Song"));
-       // tabLayout.addTab(tabLayout.newTab().setText("Album"));
+        tabLayout.addTab(tabLayout.newTab().setText("Album"));
         //tabLayout.addTab(tabLayout.newTab().setText("Singer"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         final ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);

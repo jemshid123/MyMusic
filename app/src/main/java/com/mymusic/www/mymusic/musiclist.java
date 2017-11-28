@@ -1,5 +1,6 @@
 package com.mymusic.www.mymusic;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -30,11 +31,16 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.kbeanie.multipicker.api.AudioPicker;
+import com.kbeanie.multipicker.api.Picker;
+import com.kbeanie.multipicker.api.callbacks.AudioPickerCallback;
+import com.kbeanie.multipicker.api.entity.ChosenAudio;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import devlight.io.library.ntb.NavigationTabBar;
 
@@ -42,6 +48,7 @@ public class musiclist extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,GoogleApiClient.OnConnectionFailedListener{
     private  static GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
+    AudioPicker audioPicker;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +60,7 @@ public class musiclist extends AppCompatActivity
          /**tab setup */
 
 
-
+        audioPicker = new AudioPicker(musiclist.this);
 
         /**  accessing users profile from facebook or google. */
 
@@ -146,6 +153,20 @@ public class musiclist extends AppCompatActivity
 
         } else if (id == R.id.files) {
 
+               audioPicker.allowMultiple();
+// audioPicker.
+            audioPicker.setAudioPickerCallback(new AudioPickerCallback() {
+                @Override
+                public void onAudiosChosen(List<ChosenAudio> files) {
+                    // Display Files
+                }
+
+                @Override
+                public void onError(String message) {
+                    // Handle errors
+                }
+            });
+            audioPicker.pickAudio();
         } else if (id == R.id.history) {
 
         } else if (id == R.id.settings) {
@@ -187,6 +208,9 @@ public class musiclist extends AppCompatActivity
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
+        }
+        if (requestCode == Picker.PICK_AUDIO && resultCode == RESULT_OK) {
+            audioPicker.submit(data);
         }
 
     }

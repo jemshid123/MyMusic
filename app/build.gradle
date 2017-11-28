@@ -30,10 +30,17 @@ dependencies {
     dependencies {
         repositories {
             mavenCentral()
+
         }
+
         compile 'com.sothree.slidinguppanel:library:3.3.1'
 
+
     }
+
+
+
+
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.githang:com-phillipcalvin-iconbutton:1.0.1@aar'
@@ -44,6 +51,6 @@ dependencies {
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'devlight.io:navigationtabbar:1.2.5'
+    compile 'com.kbeanie:multipicker:1.1.31@aar'
     testCompile 'junit:junit:4.12'
-
 }

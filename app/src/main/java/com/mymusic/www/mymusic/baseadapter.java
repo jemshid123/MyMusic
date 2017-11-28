@@ -63,7 +63,7 @@ public class baseadapter extends BaseAdapter {
 
             View view;
             holder hold=new holder();
-            Log.e("position",position+" "+name[position]);
+          //  Log.e("position",position+" "+name[position]);
             try {
             li=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

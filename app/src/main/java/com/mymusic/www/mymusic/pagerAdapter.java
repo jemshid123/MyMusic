@@ -11,13 +11,13 @@ import android.util.Log;
 
 public class pagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
-    static song tab1,tab2,tab3;
-
+    static song tab1,tab3;
+static album tab2;
     public pagerAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
         tab1 = new song();
-        tab2 = new song();
+        tab2 = new album();
         tab3 = new song();
     }
 

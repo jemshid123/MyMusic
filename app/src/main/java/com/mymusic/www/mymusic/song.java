@@ -188,6 +188,7 @@ Intent  intent=new Intent("songstarted");
                 MediaStore.Audio.Media.DISPLAY_NAME,
                 MediaStore.Audio.Media.DURATION,
 
+
         };
 
         Cursor cursor = context.getContentResolver().query(
