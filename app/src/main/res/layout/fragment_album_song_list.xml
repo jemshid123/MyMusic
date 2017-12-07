@@ -1,0 +1,25 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mymusic.www.mymusic.album_song_list">
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical">
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="225dp"
+    android:layout_gravity="top"
+    android:scaleType="centerCrop"
+    android:id="@+id/image"
+    android:src="@drawable/music"/>
+
+   <ListView
+       android:layout_width="match_parent"
+       android:layout_height="262dp"
+       android:id="@+id/listview"
+       android:layout_gravity="bottom"
+       android:paddingBottom="35dp"></ListView>
+   </LinearLayout>
+</FrameLayout>

@@ -52,7 +52,8 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".searchactivity"></activity>
+        <activity android:name=".searchactivity" />
+        <activity android:name=".album_song_main"></activity>
     </application>
 
 </manifest>

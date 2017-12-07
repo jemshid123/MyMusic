@@ -8,6 +8,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/albumlist"></ListView>
+        android:id="@+id/albumlist"
+         android:paddingTop="33dp"></ListView>
 
 </FrameLayout>

@@ -12,9 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:padding="@dimen/cardview_default_radius"
-        android:id="@+id/songListView"
-
-        />
+        android:paddingTop="33dp"
+        android:id="@+id/songListView" />
 
 </FrameLayout>
