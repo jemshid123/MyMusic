@@ -216,12 +216,15 @@ public class musiclist extends AppCompatActivity
     }
 
 
-    public static void revokeAccess() {
+    public  void revokeAccess() {
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
+                        File file = new File(getFilesDir() + "/registered.txt");
+                       file.delete();
                         Log.e("logout",status.toString());
+                        finish();
                     }
                 });
     }

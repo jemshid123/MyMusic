@@ -183,11 +183,11 @@ int max=progress_prev+500;
           //  Log.e("player", "Got message: " + message);
            if(message.equals("pause_button"))
             {
-                pausebuton();
+               playbuton();
             }
             else if(message.equals("play"))
             {
-                playbuton();
+               pausebuton();
                int position=intent.getExtras().getInt("song");
                current_track= position;
                 Log.e("play_number",position+" ");

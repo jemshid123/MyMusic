@@ -24,6 +24,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -264,17 +270,70 @@ return false;
     }
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            Result=result;
-            Intent intent=new Intent(MainActivity.this,musiclist.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            getBaseContext().startActivity(intent);
-            MainActivity.this.finish();
-        } else {
+        File file=new File(getFilesDir()+"/registered.txt");
+        Result=result;
+        if(file.exists())
+        {
             // Signed out, show unauthenticated UI.
+            if (result.isSuccess()) {
 
+                Intent intent=new Intent(MainActivity.this,musiclist.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getBaseContext().startActivity(intent);
+                MainActivity.this.finish();
+            }
         }
+        else
+        {
+            //sign in to web server
+            String token,name,agent;
+            token=result.getSignInAccount().getId();
+            name=result.getSignInAccount().getDisplayName();
+            agent="go";
+            if (isNetworkAvailable(getBaseContext()))
+            {
+
+                RequestQueue queue = Volley.newRequestQueue(getBaseContext());
+                String url = "http://jemshid.pythonanywhere.com/signupmethod?token="+token+"&name="+name+"&agent="+agent;
+                 Log.e("url",url);
+                // prepare the Request
+                JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONObject>()
+                        {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    Toast.makeText(getBaseContext(), response.toString(), Toast.LENGTH_LONG).show();
+                                    File file = new File(getFilesDir() + "/registered.txt");
+                                    file.createNewFile();
+                                    Intent intent=new Intent(MainActivity.this,musiclist.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    getBaseContext().startActivity(intent);
+                                    MainActivity.this.finish();
+                                }catch (Exception e){
+                                    Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+
+                                }
+                            }
+                        },
+                        new Response.ErrorListener()
+                        {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                                Log.d("Error.Response", error.getMessage());
+                            }
+                        }
+                );
+
+                // add it to the RequestQueue
+                queue.add(getRequest);
+
+            }else {
+                Toast.makeText(getBaseContext(), "authtication failure", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
     public static void revokeAccess() {
@@ -312,12 +371,43 @@ public static boolean isLoggedInfb() {
                                 Bitmap bit=getFacebookProfilePicture(id);
 
                                 saveImage(bit);
-                                Intent intent=new Intent(MainActivity.this,musiclist.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                 Result=null;
-                                getBaseContext().startActivity(intent);
-                                MainActivity.this.finish();
 
+                                 Result=null;
+
+                                RequestQueue queue = Volley.newRequestQueue(getBaseContext());
+                                String url = "http://jemshid.pythonanywhere.com/signupmethod?token="+id+"&name="+name+"&agent=fb";
+                                Log.e("url",url);
+                                // prepare the Request
+                                JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                                        new Response.Listener<JSONObject>()
+                                        {
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                try {
+                                                    Toast.makeText(getBaseContext(), response.toString(), Toast.LENGTH_LONG).show();
+                                                   
+                                                    Intent intent=new Intent(MainActivity.this,musiclist.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    getBaseContext().startActivity(intent);
+                                                    MainActivity.this.finish();
+                                                }catch (Exception e){
+                                                    Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+
+                                                }
+                                            }
+                                        },
+                                        new Response.ErrorListener()
+                                        {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                                                Log.d("Error.Response", error.getMessage());
+                                            }
+                                        }
+                                );
+
+                                // add it to the RequestQueue
+                                queue.add(getRequest);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -364,5 +454,7 @@ public static boolean isLoggedInfb() {
             return false;
         }
     }
+
+
 
 }
