@@ -159,6 +159,10 @@ public class musiclist extends AppCompatActivity
                 @Override
                 public void onAudiosChosen(List<ChosenAudio> files) {
                     // Display Files
+                    for(ChosenAudio s:files)
+                    {
+                        Toast.makeText(getBaseContext(),s.getDisplayName(),Toast.LENGTH_LONG).show();
+                    }
                 }
 
                 @Override

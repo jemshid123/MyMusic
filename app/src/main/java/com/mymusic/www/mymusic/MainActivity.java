@@ -56,6 +56,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -290,6 +291,14 @@ return false;
             token=result.getSignInAccount().getId();
             name=result.getSignInAccount().getDisplayName();
             agent="go";
+            //saving access token to file
+            try{
+                File tokenfile=new File(getFilesDir()+"/token.txt");
+                tokenfile.createNewFile();
+                FileWriter fw=new FileWriter(tokenfile);
+                fw.write(token);
+                fw.close();
+
             if (isNetworkAvailable(getBaseContext()))
             {
 
@@ -321,7 +330,7 @@ return false;
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                                Log.d("Error.Response", error.getMessage());
+                               // Log.d("Error.Response", error.getMessage());
                             }
                         }
                 );
@@ -330,7 +339,11 @@ return false;
                 queue.add(getRequest);
 
             }else {
-                Toast.makeText(getBaseContext(), "authtication failure", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "authtication failure:Server Error", Toast.LENGTH_LONG).show();
+            }
+            }catch (Exception e){
+                Toast.makeText(getBaseContext(), "authtication failure:IOerror", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
         }
 
@@ -373,6 +386,13 @@ public static boolean isLoggedInfb() {
                                 saveImage(bit);
 
                                  Result=null;
+                                //saving accesss token
+
+                                    File tokenfile=new File(getFilesDir()+"/token.txt");
+                                    tokenfile.createNewFile();
+                                    FileWriter fw=new FileWriter(tokenfile);
+                                    fw.write(id);
+                                    fw.close();
 
                                 RequestQueue queue = Volley.newRequestQueue(getBaseContext());
                                 String url = "http://jemshid.pythonanywhere.com/signupmethod?token="+id+"&name="+name+"&agent=fb";
@@ -385,7 +405,8 @@ public static boolean isLoggedInfb() {
                                             public void onResponse(JSONObject response) {
                                                 try {
                                                     Toast.makeText(getBaseContext(), response.toString(), Toast.LENGTH_LONG).show();
-                                                   
+
+
                                                     Intent intent=new Intent(MainActivity.this,musiclist.class);
                                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                                     getBaseContext().startActivity(intent);
@@ -401,7 +422,7 @@ public static boolean isLoggedInfb() {
                                             @Override
                                             public void onErrorResponse(VolleyError error) {
                                                 Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                                                Log.d("Error.Response", error.getMessage());
+                                               // Log.d("Error.Response", error.getMessage());
                                             }
                                         }
                                 );
@@ -410,6 +431,8 @@ public static boolean isLoggedInfb() {
                                 queue.add(getRequest);
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                Toast.makeText(getBaseContext(), "authtication failure:IOerror", Toast.LENGTH_LONG).show();
+
                             }
 
                             // send email and id to your web server

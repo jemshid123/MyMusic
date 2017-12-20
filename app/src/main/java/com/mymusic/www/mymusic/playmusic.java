@@ -99,7 +99,13 @@ String fp=songList.getPath();
             mp.setDataSource(is.getFD());
 
             mp.prepare();
-            mp.start();
+            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                }
+            });
+
 
 handler.postDelayed(seekbarprogress,100);
 
