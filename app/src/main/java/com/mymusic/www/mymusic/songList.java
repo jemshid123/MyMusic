@@ -1,8 +1,14 @@
 package com.mymusic.www.mymusic;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -118,5 +124,29 @@ try {
 {
     return minutes + ":" + sec;
 }
+    }
+
+
+    public  static String getToken(Context context) throws Exception
+    {
+        File tokenfile=new File(context.getFilesDir()+"/token.txt");
+        String num;
+
+
+
+
+       try {
+          Scanner sc=new Scanner(tokenfile);
+           num=sc.nextLine();
+
+           Toast.makeText(context,num+"",Toast.LENGTH_LONG).show();
+       }catch (Exception e)
+       {
+           Toast.makeText(context,"token read error",Toast.LENGTH_LONG).show();
+           throw new Exception();
+       }
+
+
+       return  num;
     }
 }

@@ -71,6 +71,8 @@ import com.facebook.appevents.AppEventsLogger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.xml.transform.ErrorListener;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 AlertDialog.Builder build;
@@ -328,7 +330,7 @@ return false;
                         new Response.ErrorListener()
                         {
                             @Override
-                            public void onErrorResponse(VolleyError error) {
+                            public void onErrorResponse(com.android.volley.error.VolleyError error) {
                                 Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
                                // Log.d("Error.Response", error.getMessage());
                             }
@@ -419,12 +421,14 @@ public static boolean isLoggedInfb() {
                                         },
                                         new Response.ErrorListener()
                                         {
+
                                             @Override
-                                            public void onErrorResponse(VolleyError error) {
+                                            public void onErrorResponse(com.android.volley.error.VolleyError error) {
                                                 Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                                               // Log.d("Error.Response", error.getMessage());
+                                                // Log.d("Error.Response", error.getMessage());
                                             }
                                         }
+
                                 );
 
                                 // add it to the RequestQueue

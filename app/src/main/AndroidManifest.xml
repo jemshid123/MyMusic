@@ -53,7 +53,8 @@
             android:exported="true" />
 
         <activity android:name=".searchactivity" />
-        <activity android:name=".album_song_main"></activity>
+        <activity android:name=".album_song_main" />
+        <activity android:name=".uploadwebview"></activity>
     </application>
 
 </manifest>

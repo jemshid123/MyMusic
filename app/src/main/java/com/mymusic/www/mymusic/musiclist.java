@@ -1,14 +1,19 @@
 package com.mymusic.www.mymusic;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
@@ -22,6 +27,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+
+import com.android.volley.error.VolleyError;
+import com.android.volley.toolbox.Volley;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -36,11 +47,26 @@ import com.kbeanie.multipicker.api.Picker;
 import com.kbeanie.multipicker.api.callbacks.AudioPickerCallback;
 import com.kbeanie.multipicker.api.entity.ChosenAudio;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import devlight.io.library.ntb.NavigationTabBar;
 
@@ -49,6 +75,8 @@ public class musiclist extends AppCompatActivity
     private  static GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
     AudioPicker audioPicker;
+    RequestQueue queue ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +85,14 @@ public class musiclist extends AppCompatActivity
         setSupportActionBar(toolbar);
           setTitle("     My Music");
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
-         /**tab setup */
 
+        queue = Volley.newRequestQueue(getBaseContext());
 
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        /**tab setup */
         audioPicker = new AudioPicker(musiclist.this);
 
         /**  accessing users profile from facebook or google. */
@@ -153,24 +186,75 @@ public class musiclist extends AppCompatActivity
 
         } else if (id == R.id.files) {
 
-               audioPicker.allowMultiple();
-// audioPicker.
-            audioPicker.setAudioPickerCallback(new AudioPickerCallback() {
-                @Override
-                public void onAudiosChosen(List<ChosenAudio> files) {
-                    // Display Files
-                    for(ChosenAudio s:files)
-                    {
-                        Toast.makeText(getBaseContext(),s.getDisplayName(),Toast.LENGTH_LONG).show();
-                    }
-                }
 
+
+                  //  Toast.makeText(getBaseContext(),"token="+token+"&uploadid="+uploadid+"&date="+date,Toast.LENGTH_LONG).show();
+                //private or public
+            AlertDialog.Builder alertDialog=new AlertDialog.Builder(this);
+            alertDialog.setIcon(R.mipmap.ic_launcher);
+            alertDialog.setTitle("Mode");
+            alertDialog.setMessage("select upload mode");
+            alertDialog.setPositiveButton("Private", new DialogInterface.OnClickListener() {
                 @Override
-                public void onError(String message) {
-                    // Handle errors
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        int i = 1;
+                        Random rand=new Random();
+                        String uri = "http://jemshid.pythonanywhere.com/privateuploadmethod?";
+                        String token, uploadid, date;
+                        token = songList.getToken(getBaseContext());
+                        uploadid = rand.nextInt(1000000000) + "";
+                        date = Calendar.getInstance().getTime().toString();
+                        uri = uri + "token=" + token + "&uploadid=" + uploadid + "&date=" + date;
+                        uri = uri + "&mode=private";
+                        uri = uri + "&path=" + uploadid + "_" + i;
+                        i++;
+                        Log.e("uri", uri);
+                        //Intent intent=new Intent(musiclist.this,uploadwebview.class);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+
+                        intent.putExtra("uri", uri);
+                        startActivity(intent);
+                    }catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        finish();
+                    }
+
                 }
             });
-            audioPicker.pickAudio();
+            alertDialog.setNegativeButton("Public", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+try {
+    int i = 1;
+    Random rand=new Random();
+    String uri = "http://jemshid.pythonanywhere.com/privateuploadmethod?";
+    String token, uploadid, date;
+    token = songList.getToken(getBaseContext());
+    uploadid = rand.nextInt(1000000000) + "";
+    date = Calendar.getInstance().getTime().toString();
+    uri = uri + "token=" + token + "&uploadid=" + uploadid + "&date=" + date;
+    uri = uri + "&mode=public";
+    uri = uri + "&path=" + uploadid + "_" + i;
+    i++;
+    Log.e("uri", uri);
+    //Intent intent=new Intent(musiclist.this,uploadwebview.class);
+    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+
+    intent.putExtra("uri", uri);
+    startActivity(intent);
+}catch (Exception e)
+{
+    e.printStackTrace();
+    finish();
+}
+                }
+            });
+            alertDialog.setCancelable(true);
+
+   AlertDialog alert=alertDialog.create();
+            alert.show();
         } else if (id == R.id.history) {
 
         } else if (id == R.id.settings) {
@@ -231,5 +315,88 @@ public class musiclist extends AppCompatActivity
                         finish();
                     }
                 });
+    }
+
+
+    //file upload method
+    private void Upload(String urlString,String selectedPath,String  name){
+        HttpURLConnection conn = null;
+        DataOutputStream dos = null;
+        DataInputStream inStream = null;
+        String lineEnd = "rn";
+        String twoHyphens = "--";
+        String boundary =  "*****";
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1*1024*1024;
+        String responseFromServer = "";
+       try
+        {
+            //------------------ CLIENT REQUEST
+            FileInputStream fileInputStream = new FileInputStream(new File(selectedPath) );
+            // open a URL connection to the Servlet
+            URL url = new URL(urlString);
+            // Open a HTTP connection to the URL
+            conn = (HttpURLConnection) url.openConnection();
+            // Allow Inputs
+            conn.setDoInput(true);
+            // Allow Outputs
+            conn.setDoOutput(true);
+            // Don't use a cached copy.
+            conn.setUseCaches(false);
+            // Use a post method.
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
+            dos = new DataOutputStream( conn.getOutputStream() );
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=song ;filename="+name+ lineEnd);
+            dos.writeBytes(lineEnd);
+            // create a buffer of maximum size
+            bytesAvailable = fileInputStream.available();
+            bufferSize = Math.min(bytesAvailable, maxBufferSize);
+            buffer = new byte[bufferSize];
+            // read file and write it into form...
+            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            while (bytesRead > 0)
+            {
+                dos.write(buffer, 0, bufferSize);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+            }
+            // send multipart form data necesssary after file data...
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+            // close streams
+            Log.e("Debug","File is written");
+            fileInputStream.close();
+            dos.flush();
+            dos.close();
+        }
+        catch (MalformedURLException ex)
+        {
+            Log.e("Debug", "error: url " + ex.getMessage(), ex);
+        }
+        catch (IOException ioe)
+        {
+            Log.e("Debug", "error write: " + ioe.getMessage(), ioe);
+        }
+        //------------------ read the SERVER RESPONSE
+        try {
+            inStream = new DataInputStream ( conn.getInputStream() );
+            String str;
+
+            while (( str = inStream.readLine()) != null)
+            {
+                Toast.makeText(getBaseContext(),str,Toast.LENGTH_LONG).show();
+                Log.e("Debug ","Server Response "+str);
+            }
+            inStream.close();
+
+        }
+        catch (IOException ioex){
+            Log.e("Debug", "error read: " + ioex.getMessage(), ioex);
+        }
     }
 }

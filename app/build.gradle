@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -24,6 +25,7 @@ repositories {
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'dev.dworks.libs:volleyplus:+'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -37,6 +39,7 @@ dependencies {
 
 
     }
+
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.githang:com-phillipcalvin-iconbutton:1.0.1@aar'
