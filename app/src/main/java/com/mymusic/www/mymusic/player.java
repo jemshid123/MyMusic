@@ -76,6 +76,13 @@ musicplaying=false;
         previous=(ImageButton)view.findViewById(R.id.previous);
         next=(ImageButton)view.findViewById(R.id.next);
         /** next and previous */
+        try{
+            songList.process(songList.getsongs(playmusic.position));
+            songname.setText(songList.getTitle());
+            total_time.setText(songList.getDuration());
+            seekBar.setMax(songList.getrawduration());
+
+        }catch (Exception e){}
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

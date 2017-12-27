@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -330,7 +331,7 @@ return false;
                         new Response.ErrorListener()
                         {
                             @Override
-                            public void onErrorResponse(com.android.volley.error.VolleyError error) {
+                            public void onErrorResponse(VolleyError error) {
                                 Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
                                // Log.d("Error.Response", error.getMessage());
                             }
@@ -401,33 +402,29 @@ public static boolean isLoggedInfb() {
                                 Log.e("url",url);
                                 // prepare the Request
                                 JsonObjectRequest getRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                                        new Response.Listener<JSONObject>()
-                                        {
+                                        new Response.Listener<JSONObject>() {
                                             @Override
                                             public void onResponse(JSONObject response) {
                                                 try {
                                                     Toast.makeText(getBaseContext(), response.toString(), Toast.LENGTH_LONG).show();
 
 
-                                                    Intent intent=new Intent(MainActivity.this,musiclist.class);
+                                                    Intent intent = new Intent(MainActivity.this, musiclist.class);
                                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                                     getBaseContext().startActivity(intent);
                                                     MainActivity.this.finish();
-                                                }catch (Exception e){
+                                                } catch (Exception e) {
                                                     Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 
                                                 }
                                             }
-                                        },
-                                        new Response.ErrorListener()
-                                        {
-
-                                            @Override
-                                            public void onErrorResponse(com.android.volley.error.VolleyError error) {
-                                                Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-                                                // Log.d("Error.Response", error.getMessage());
-                                            }
-                                        }
+                                        }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                                        // Log.d("Error.Response", error.getMessage());
+                                    }
+                                }
 
                                 );
 

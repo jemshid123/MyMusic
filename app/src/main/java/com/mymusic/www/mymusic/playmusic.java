@@ -17,7 +17,7 @@ import java.io.FileInputStream;
 
 public class playmusic extends Service {
     MediaPlayer mp;
-    int position;
+   static int position;
     String details;
     Handler handler;
     @Override

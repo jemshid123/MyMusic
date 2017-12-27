@@ -31,7 +31,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 
-import com.android.volley.error.VolleyError;
+
 import com.android.volley.toolbox.Volley;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
@@ -166,7 +166,7 @@ public class musiclist extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
             startActivity(new Intent(this,searchactivity.class));
              return true;
         }
@@ -184,7 +184,7 @@ public class musiclist extends AppCompatActivity
             // Handle the camera action
         } else if (id == R.id.recommended) {
 
-        } else if (id == R.id.files) {
+        } else if (id == R.id.share) {
 
 
 
@@ -229,7 +229,7 @@ public class musiclist extends AppCompatActivity
 try {
     int i = 1;
     Random rand=new Random();
-    String uri = "http://jemshid.pythonanywhere.com/privateuploadmethod?";
+    String uri = "http://jemshid.pythonanywhere.com/publicuploadmethod?";
     String token, uploadid, date;
     token = songList.getToken(getBaseContext());
     uploadid = rand.nextInt(1000000000) + "";
@@ -255,7 +255,8 @@ try {
 
    AlertDialog alert=alertDialog.create();
             alert.show();
-        } else if (id == R.id.history) {
+        } else if (id == R.id.collection) {
+            startActivity(new Intent(musiclist.this,collection.class));
 
         } else if (id == R.id.settings) {
 
@@ -318,85 +319,5 @@ try {
     }
 
 
-    //file upload method
-    private void Upload(String urlString,String selectedPath,String  name){
-        HttpURLConnection conn = null;
-        DataOutputStream dos = null;
-        DataInputStream inStream = null;
-        String lineEnd = "rn";
-        String twoHyphens = "--";
-        String boundary =  "*****";
-        int bytesRead, bytesAvailable, bufferSize;
-        byte[] buffer;
-        int maxBufferSize = 1*1024*1024;
-        String responseFromServer = "";
-       try
-        {
-            //------------------ CLIENT REQUEST
-            FileInputStream fileInputStream = new FileInputStream(new File(selectedPath) );
-            // open a URL connection to the Servlet
-            URL url = new URL(urlString);
-            // Open a HTTP connection to the URL
-            conn = (HttpURLConnection) url.openConnection();
-            // Allow Inputs
-            conn.setDoInput(true);
-            // Allow Outputs
-            conn.setDoOutput(true);
-            // Don't use a cached copy.
-            conn.setUseCaches(false);
-            // Use a post method.
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Connection", "Keep-Alive");
-            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
-            dos = new DataOutputStream( conn.getOutputStream() );
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=song ;filename="+name+ lineEnd);
-            dos.writeBytes(lineEnd);
-            // create a buffer of maximum size
-            bytesAvailable = fileInputStream.available();
-            bufferSize = Math.min(bytesAvailable, maxBufferSize);
-            buffer = new byte[bufferSize];
-            // read file and write it into form...
-            bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-            while (bytesRead > 0)
-            {
-                dos.write(buffer, 0, bufferSize);
-                bytesAvailable = fileInputStream.available();
-                bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-            }
-            // send multipart form data necesssary after file data...
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-            // close streams
-            Log.e("Debug","File is written");
-            fileInputStream.close();
-            dos.flush();
-            dos.close();
-        }
-        catch (MalformedURLException ex)
-        {
-            Log.e("Debug", "error: url " + ex.getMessage(), ex);
-        }
-        catch (IOException ioe)
-        {
-            Log.e("Debug", "error write: " + ioe.getMessage(), ioe);
-        }
-        //------------------ read the SERVER RESPONSE
-        try {
-            inStream = new DataInputStream ( conn.getInputStream() );
-            String str;
 
-            while (( str = inStream.readLine()) != null)
-            {
-                Toast.makeText(getBaseContext(),str,Toast.LENGTH_LONG).show();
-                Log.e("Debug ","Server Response "+str);
-            }
-            inStream.close();
-
-        }
-        catch (IOException ioex){
-            Log.e("Debug", "error read: " + ioex.getMessage(), ioex);
-        }
-    }
 }

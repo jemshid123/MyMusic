@@ -54,7 +54,8 @@
 
         <activity android:name=".searchactivity" />
         <activity android:name=".album_song_main" />
-        <activity android:name=".uploadwebview"></activity>
+        <activity android:name=".collection" />
+        <activity android:name=".addkey"></activity>
     </application>
 
 </manifest>
