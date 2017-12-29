@@ -55,7 +55,10 @@
         <activity android:name=".searchactivity" />
         <activity android:name=".album_song_main" />
         <activity android:name=".collection" />
-        <activity android:name=".addkey"></activity>
+        <activity android:name=".addkey" />
+        <activity android:name=".settings" />
+        <activity android:name=".generalwebview" />
+        <activity android:name=".public_server_songs"></activity>
     </application>
 
 </manifest>

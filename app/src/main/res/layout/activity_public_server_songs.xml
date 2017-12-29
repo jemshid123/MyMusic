@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_public_server_songs"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.mymusic.www.mymusic.public_server_songs"
+    android:gravity="bottom">
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.mymusic.www.mymusic.server_songs"/>
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.mymusic.www.mymusic.player"/>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

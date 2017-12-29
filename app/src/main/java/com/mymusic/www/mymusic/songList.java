@@ -87,6 +87,7 @@ return  true;
     public  static String getDuration()
     {
        long millis=Integer.parseInt(details[5]);
+
 if(millis==1) return " ";
         long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
@@ -94,10 +95,12 @@ if(millis==1) return " ";
         try {
             seconds = seconds % 60;
             sec = "" + seconds;
-            sec = sec.substring(0, 2);
+
+
             return minutes + ":" + sec;
         }catch (Exception e)
         {
+            Log.e("time error",e.getMessage());
             return minutes + ":" + sec;
         }
     }

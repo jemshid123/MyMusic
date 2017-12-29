@@ -72,7 +72,7 @@ context=getContext();
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_song, container, false);
-        songListView=(ListView)view.findViewById(R.id.songListView);
+        songListView=(ListView)view.findViewById(R.id.lv1);
         new getMusicList().execute(songListView);
         Intent startmusicintent=new Intent(getActivity(),playmusic.class);
         getActivity().startService(startmusicintent);
@@ -83,28 +83,28 @@ context=getContext();
     public void onStart()
     {
         super.onStart();
-songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-      try {
-
-songList.putsongs(songList.getsongcomplete());
-Intent  intent=new Intent("songstarted");
-          intent.putExtra("message","play");
-          intent.putExtra("song",position);
-          sendMessage(intent);
-           songList.process(songList.getsongs(position));
-          Toast.makeText(getContext(),songList.getTitle(),Toast.LENGTH_LONG).show();
 
 
+            songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    try {
 
-      }catch (Exception e)
-      {
-          e.printStackTrace();
-      }
+                        songList.putsongs(songList.getsongcomplete());
+                        Intent intent = new Intent("songstarted");
+                        intent.putExtra("message", "play");
+                        intent.putExtra("song", position);
+                        sendMessage(intent);
+                        songList.process(songList.getsongs(position));
+                        Toast.makeText(getContext(), songList.getTitle(), Toast.LENGTH_LONG).show();
 
-    }
-});
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
 
 
     }

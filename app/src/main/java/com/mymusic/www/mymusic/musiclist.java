@@ -182,8 +182,13 @@ public class musiclist extends AppCompatActivity
 
         if (id == R.id.trending) {
             // Handle the camera action
+            Intent intent=new Intent(musiclist.this,public_server_songs.class);
+                    intent.putExtra("tabno",1);
+            startActivity(intent);
         } else if (id == R.id.recommended) {
-
+            Intent intent=new Intent(musiclist.this,public_server_songs.class);
+            intent.putExtra("tabno",2);
+            startActivity(intent);
         } else if (id == R.id.share) {
 
 
@@ -198,17 +203,18 @@ public class musiclist extends AppCompatActivity
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     try {
-                        int i = 1;
+
                         Random rand=new Random();
                         String uri = "http://jemshid.pythonanywhere.com/privateuploadmethod?";
                         String token, uploadid, date;
                         token = songList.getToken(getBaseContext());
                         uploadid = rand.nextInt(1000000000) + "";
-                        date = Calendar.getInstance().getTime().toString();
+                        SimpleDateFormat ft = new SimpleDateFormat ("dd-MM-yyyy");
+                        Date dateobj = new Date();
+                        date = ft.format(dateobj);
                         uri = uri + "token=" + token + "&uploadid=" + uploadid + "&date=" + date;
-                        uri = uri + "&mode=private";
-                        uri = uri + "&path=" + uploadid + "_" + i;
-                        i++;
+
+
                         Log.e("uri", uri);
                         //Intent intent=new Intent(musiclist.this,uploadwebview.class);
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
@@ -227,17 +233,18 @@ public class musiclist extends AppCompatActivity
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 try {
-    int i = 1;
+
     Random rand=new Random();
     String uri = "http://jemshid.pythonanywhere.com/publicuploadmethod?";
     String token, uploadid, date;
     token = songList.getToken(getBaseContext());
     uploadid = rand.nextInt(1000000000) + "";
-    date = Calendar.getInstance().getTime().toString();
+    SimpleDateFormat ft = new SimpleDateFormat ("dd-MM-yyyy");
+    Date dateobj = new Date();
+    date = ft.format(dateobj);
     uri = uri + "token=" + token + "&uploadid=" + uploadid + "&date=" + date;
-    uri = uri + "&mode=public";
-    uri = uri + "&path=" + uploadid + "_" + i;
-    i++;
+
+
     Log.e("uri", uri);
     //Intent intent=new Intent(musiclist.this,uploadwebview.class);
     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
@@ -259,6 +266,7 @@ try {
             startActivity(new Intent(musiclist.this,collection.class));
 
         } else if (id == R.id.settings) {
+            startActivity(new Intent(musiclist.this,settings.class));
 
         } else if (id == R.id.logout) {
             if(MainActivity.isLoggedInfb())

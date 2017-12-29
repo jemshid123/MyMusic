@@ -5,12 +5,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,12 +94,25 @@ return START_STICKY;
                 });
 
 String fp=songList.getPath();
-            File file=new File(songList.getPath());
-            FileInputStream is=new FileInputStream(file);
+
+            try{
+                Uri myUri = Uri.parse(fp);
+
+                mp.setDataSource(getBaseContext(),myUri);
+                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                Toast.makeText(getBaseContext(),"uri"+myUri.toString(),Toast.LENGTH_LONG).show();
+
+            }catch (Exception e)
+            {
+                Toast.makeText(getBaseContext(),"file"+e.toString(),Toast.LENGTH_LONG).show();
+                File file=new File(fp);
+                FileInputStream is=new FileInputStream(file);
 
 
 
-            mp.setDataSource(is.getFD());
+                mp.setDataSource(is.getFD());
+            }
+
 
             mp.prepare();
             mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

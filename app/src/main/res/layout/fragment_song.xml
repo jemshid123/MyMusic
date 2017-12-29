@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:paddingTop="33dp"
-        android:id="@+id/songListView" />
+        android:id="@+id/lv1" />
 
 </FrameLayout>

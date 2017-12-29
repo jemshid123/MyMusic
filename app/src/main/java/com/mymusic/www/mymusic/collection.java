@@ -26,6 +26,12 @@ public class collection extends AppCompatActivity {
             startActivity(new Intent(collection.this,addkey.class));
             Toast.makeText(getBaseContext(),"add",Toast.LENGTH_LONG).show();
         }
+        else if(id==R.id.refresh)
+        {
+            startActivity(getIntent());
+            finish();
+
+        }
         return  true;
     }
 
