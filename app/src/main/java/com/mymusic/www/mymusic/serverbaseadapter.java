@@ -29,12 +29,14 @@ public class serverbaseadapter extends BaseAdapter {
     String name[];
     songList sl;
     LayoutInflater li;
+    String type;
 
-    public serverbaseadapter(Context con,String Thumb[],String name[])
+    public serverbaseadapter(Context con,String Thumb[],String name[],String type)
     {
         this.context=con;
         this.Thumb=Thumb;
         this.name=name;
+        this.type=type;
        // Toast.makeText(context,name[0], Toast.LENGTH_LONG).show();
 
     }
@@ -81,7 +83,7 @@ public class serverbaseadapter extends BaseAdapter {
             hold.artist=(TextView)view.findViewById(R.id.artist);
             hold.tc=(TextView)view.findViewById(R.id.time) ;
 
-String uri="http://jemshid.pythonanywhere.com/get_image?id=";
+String uri="http://jemshid.pythonanywhere.com/get_image?type="+type+"&id=";
 
 
 

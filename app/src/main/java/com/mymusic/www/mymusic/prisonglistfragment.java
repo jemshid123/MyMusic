@@ -68,13 +68,14 @@ ListView lv;
                             {
 
                                 songs1.add(response.getString("song"+i));
+
                                 songList.process(songs1.get(i));
                                 thumbs1.add(songList.getID()+".jpg");
 
                             }
                             songs=songs1.toArray(new String[songs1.size()]);
                             thumbs=thumbs1.toArray(new String[thumbs1.size()]);
-                            lv.setAdapter(new serverbaseadapter(getContext(),thumbs,songs));
+                            lv.setAdapter(new serverbaseadapter(getContext(),thumbs,songs,"pri"));
                           
 
                         }catch (Exception e)
