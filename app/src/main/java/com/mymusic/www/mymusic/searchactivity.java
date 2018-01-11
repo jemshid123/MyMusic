@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,7 +41,8 @@ ImageButton search_button;
         setContentView(R.layout.activity_searchactivity);
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-context=getBaseContext();
+
+        context=getBaseContext();
         search=(EditText) findViewById(R.id.search);
         search_list=(ListView)findViewById(R.id.search_list);
         search_button=(ImageButton)findViewById(R.id.button1);

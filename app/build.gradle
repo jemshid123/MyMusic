@@ -52,5 +52,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'devlight.io:navigationtabbar:1.2.5'
     compile 'com.kbeanie:multipicker:1.1.31@aar'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.10'
     testCompile 'junit:junit:4.12'
+
 }

@@ -18,6 +18,12 @@
             android:id="@+id/collection"
             android:icon="@android:drawable/ic_menu_recent_history"
             android:title="Collection" />
+
+        <item
+            android:id="@+id/recognize"
+            android:icon="@android:drawable/ic_menu_search"
+            android:title="Voice search"
+            />
     </group>
 
     <item android:title="Account">

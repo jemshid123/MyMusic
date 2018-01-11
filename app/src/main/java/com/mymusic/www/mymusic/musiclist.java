@@ -280,6 +280,10 @@ try {
             }
             startActivity(new Intent(musiclist.this,MainActivity.class));
         }
+        else if(id== R.id.recognize)
+        {
+           startActivity(new Intent(this,audio_recog.class));
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

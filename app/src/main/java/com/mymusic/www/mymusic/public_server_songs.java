@@ -1,5 +1,6 @@
 package com.mymusic.www.mymusic;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -31,7 +32,7 @@ public class public_server_songs extends AppCompatActivity {
         int id=item.getItemId();
         if(R.id.action_search==id)
         {
-            Toast.makeText(getBaseContext(),"search",Toast.LENGTH_LONG).show();
+           startActivity(new Intent(this,server_search.class));
         }
         return true;
     }
