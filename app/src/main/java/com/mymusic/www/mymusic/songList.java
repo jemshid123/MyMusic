@@ -44,9 +44,10 @@ public  class songList {
 
     public  static boolean process(String string)
 
-    {  //Log.e("pattern error",string);
+    {
 
         details=string.split(Pattern.quote("|@@|"));
+       // Log.e("pattern ",string+" "+details.length);
 temp=details;
            if(details.length != 6)
            {
@@ -86,22 +87,27 @@ return  true;
 
     public  static String getDuration()
     {
-       long millis=Integer.parseInt(details[5]);
-
-if(millis==1) return " ";
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
-        String sec=" ";
         try {
-            seconds = seconds % 60;
-            sec = "" + seconds;
+            long millis = Integer.parseInt(details[5]);
+
+            if (millis == 1) return " ";
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+            long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+            String sec = " ";
+            try {
+                seconds = seconds % 60;
+                sec = "" + seconds;
 
 
-            return minutes + ":" + sec;
+                return minutes + ":" + sec;
+            } catch (Exception e) {
+                Log.e("time error", e.getMessage());
+                return minutes + ":" + sec;
+            }
         }catch (Exception e)
         {
-            Log.e("time error",e.getMessage());
-            return minutes + ":" + sec;
+            Log.e("milis error",e.getMessage());
+            return "5:00";
         }
     }
 

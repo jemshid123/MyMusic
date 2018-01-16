@@ -49,6 +49,49 @@ public class server_search extends AppCompatActivity {
         thumbs1=new ArrayList<String>();
         //search_button.setBackgroundColor(getResources().getColor(R.color.button));
 
+
+
+
+
+        try {
+            search_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    songList.putsongs(Songs);
+                    Intent intent=new Intent("songstarted");
+                    intent.putExtra("message","play");
+                    intent.putExtra("song",position);
+                    LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+                    songList.process(songList.getsongs(position));
+                    Toast.makeText(getBaseContext(),songList.getTitle(),Toast.LENGTH_LONG).show();
+
+                }
+            });
+            String json=getIntent().getExtras().getString("response");
+            JSONObject jsonObject = new JSONObject(json);
+            int size = jsonObject.getInt("size");
+            if(size>0) {
+                String song = jsonObject.getString("song0");
+                songList.process(song);
+
+                String song1[]=new String[]{song};
+                String thumb1[]=new String[]{songList.getID()+".jpg"};
+                Songs=song1;
+                thumbs=thumb1;
+
+               search_list.setAdapter(new serverbaseadapter(context,thumb1,song1,"pub"));
+
+            }else
+            {
+                search.setHint("No Match");
+            }
+
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,19 +136,7 @@ public class server_search extends AppCompatActivity {
                 });
                 queue.add(request);
 
-                search_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        songList.putsongs(Songs);
-                        Intent intent=new Intent("songstarted");
-                        intent.putExtra("message","play");
-                        intent.putExtra("song",position);
-                        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
-                        songList.process(songList.getsongs(position));
-                        Toast.makeText(getBaseContext(),songList.getTitle(),Toast.LENGTH_LONG).show();
 
-                    }
-                });
 
             }
         });
