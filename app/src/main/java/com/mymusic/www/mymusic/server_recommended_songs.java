@@ -92,6 +92,9 @@ public class server_recommended_songs extends Fragment {
                 intent.putExtra("message","play");
                 intent.putExtra("song",position);
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+
+
+
                 songList.process(songList.getsongs(position));
                 Toast.makeText(getContext(),songList.getTitle(),Toast.LENGTH_LONG).show();
 

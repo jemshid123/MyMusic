@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Inflater;
 
+import pl.droidsonroids.gif.GifImageView;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +47,7 @@ ImageButton previous,play,next;
     TextView songname,total_time,current_time;
     int progress_prev,current_track;
 boolean musicplaying;
+    GifImageView gifImageView;
 
     public player() {
         // Required empty public constructor
@@ -75,6 +78,8 @@ musicplaying=false;
         play=(ImageButton)view.findViewById(R.id.play);
         previous=(ImageButton)view.findViewById(R.id.previous);
         next=(ImageButton)view.findViewById(R.id.next);
+        gifImageView=(GifImageView)view.findViewById(R.id.loadgif);
+        gifImageView.setVisibility(View.INVISIBLE);
         /** next and previous */
         try{
             songList.process(songList.getsongs(playmusic.position));
@@ -109,11 +114,12 @@ musicplaying=false;
             public void onClick(View v) {
 
                 if (!musicplaying) {
-                   playbuton();
+                    pausebuton();
                 }
                 else
                 {
-                   pausebuton();
+                    playbuton();
+
                 }
             }
         });
@@ -187,7 +193,7 @@ int max=progress_prev+500;
             // Get extra data included in the Intent
             int i;
             String message = intent.getStringExtra("message");
-          //  Log.e("player", "Got message: " + message);
+          Log.e("player", "Got message: " + message);
            if(message.equals("pause_button"))
             {
                playbuton();
@@ -211,6 +217,12 @@ int max=progress_prev+500;
                progress_prev=i;
                seekBar.setProgress(i);
                current_time.setText(songList.formatduration(i));
+           }else if(message.equals("load"))
+           {
+               gifImageView.setVisibility(View.VISIBLE);
+           }
+           else if(message.equals("stopload")) {
+               gifImageView.setVisibility(View.INVISIBLE);
            }
         }
     };
@@ -219,8 +231,8 @@ int max=progress_prev+500;
 
     public void playbuton()
     {
-        musicplaying=true;
-        play.setImageResource(R.drawable.play);
+        musicplaying=false;
+        play.setImageResource(R.drawable.pause);
         Intent  intent=new Intent("songstarted");
         intent.putExtra("message","resume");
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
@@ -228,8 +240,8 @@ int max=progress_prev+500;
     }
     public void pausebuton()
     {
-        musicplaying=false;
-        play.setImageResource(R.drawable.pause);
+        musicplaying=true;
+        play.setImageResource(R.drawable.play);
         Intent  intent=new Intent("songstarted");
         intent.putExtra("message","pause");
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);

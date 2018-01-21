@@ -100,11 +100,15 @@ String fp=songList.getPath();
 
                 mp.setDataSource(getBaseContext(),myUri);
                 mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                Toast.makeText(getBaseContext(),"uri"+myUri.toString(),Toast.LENGTH_LONG).show();
+               // Toast.makeText(getBaseContext(),"uri"+myUri.toString(),Toast.LENGTH_LONG).show();
+
+                Intent intent=new Intent("songstarted");
+                intent.putExtra("message","load");
+                LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
 
             }catch (Exception e)
             {
-                Toast.makeText(getBaseContext(),"file"+e.toString(),Toast.LENGTH_LONG).show();
+               // Toast.makeText(getBaseContext(),"file"+e.toString(),Toast.LENGTH_LONG).show();
                 File file=new File(fp);
                 FileInputStream is=new FileInputStream(file);
 
@@ -114,11 +118,22 @@ String fp=songList.getPath();
             }
 
 
-            mp.prepare();
+            mp.prepareAsync();
             mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();
+                    Intent intent=new Intent("songstarted");
+                    intent.putExtra("message","stopload");
+                    LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+                }
+            });
+
+            mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Toast.makeText(getBaseContext(),"Error Playing song",Toast.LENGTH_LONG).show();
+                    return false;
                 }
             });
 
