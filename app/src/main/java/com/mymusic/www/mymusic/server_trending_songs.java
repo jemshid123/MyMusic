@@ -54,7 +54,9 @@ public class server_trending_songs extends Fragment {
                     public void onResponse(JSONObject response) {
 
                         try {
-
+                            Intent intent=new Intent("songstarted");
+                            intent.putExtra("message","stopload");
+                            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
                             int size = response.getInt("size");
 
                             for(int i=0;i<size;i++)
@@ -79,10 +81,17 @@ public class server_trending_songs extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Intent intent=new Intent("songstarted");
+                intent.putExtra("message","stopload");
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
             }
         });
         queue.add(request);
+
+        Intent intent=new Intent("songstarted");
+        intent.putExtra("message","load");
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

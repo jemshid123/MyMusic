@@ -122,16 +122,20 @@ String fp=songList.getPath();
             mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    mp.start();
                     Intent intent=new Intent("songstarted");
                     intent.putExtra("message","stopload");
                     LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+                    mp.start();
+
                 }
             });
 
             mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Intent intent=new Intent("songstarted");
+                    intent.putExtra("message","stopload");
+                    LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
                     Toast.makeText(getBaseContext(),"Error Playing song",Toast.LENGTH_LONG).show();
                     return false;
                 }
