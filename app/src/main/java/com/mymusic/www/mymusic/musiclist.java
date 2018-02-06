@@ -1,9 +1,12 @@
 package com.mymusic.www.mymusic;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -93,7 +96,7 @@ public class musiclist extends AppCompatActivity
             StrictMode.setThreadPolicy(policy);
         }
         /**tab setup */
-        audioPicker = new AudioPicker(musiclist.this);
+
 
         /**  accessing users profile from facebook or google. */
 
@@ -138,6 +141,7 @@ public class musiclist extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -165,11 +169,7 @@ public class musiclist extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_search) {
-            startActivity(new Intent(this,searchactivity.class));
-             return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -179,7 +179,31 @@ public class musiclist extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        if( !isNetworkAvailable())
+        {
+            AlertDialog alertDialog;
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            builder.setCancelable(false);
+            builder.setIcon(R.drawable.headphone);
+            builder.setTitle("No Network Connection");
+            builder.setMessage("Option Require Network connection");
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
+                }
+            });
+            alertDialog=builder.create();
+            alertDialog.show();
+
+         return  true;
+
+        }
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_search) {
+            startActivity(new Intent(this,searchactivity.class));
+            return true;
+        }
         if (id == R.id.trending) {
             // Handle the camera action
             Intent intent=new Intent(musiclist.this,public_server_songs.class);
@@ -329,7 +353,12 @@ try {
                     }
                 });
     }
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 
 }

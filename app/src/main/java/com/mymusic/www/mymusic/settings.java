@@ -18,7 +18,7 @@ ArrayAdapter<String> arrayAdapter;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-
+       final Intent intent=new Intent(settings.this,generalwebview.class);
 
         String[] options=new String[]{"Private Uploads","Public Uploads","Attached keys"};
         arrayAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,android.R.id.text1,options);
@@ -30,7 +30,7 @@ ArrayAdapter<String> arrayAdapter;
 switch(position)
         {
             case 0:
-                Intent intent=new Intent(settings.this,generalwebview.class);
+
                 try {
                     intent.putExtra("url", "http://jemshid.pythonanywhere.com/get_my_prisong?token=" + songList.getToken(getBaseContext()));
                 startActivity(intent);
@@ -39,6 +39,15 @@ switch(position)
                     e.printStackTrace();
                 }
                 break;
+            case 1:
+            try {
+                intent.putExtra("url", "http://jemshid.pythonanywhere.com/get_my_pubsong?token=" + songList.getToken(getBaseContext()));
+                startActivity(intent);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            break;
         }
             }
         });

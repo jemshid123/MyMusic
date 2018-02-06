@@ -31,6 +31,7 @@ dependencies {
     dependencies {
         repositories {
             mavenCentral()
+            maven { url "https://jitpack.io" }
 
         }
 
@@ -53,6 +54,7 @@ dependencies {
     compile 'devlight.io:navigationtabbar:1.2.5'
     compile 'com.kbeanie:multipicker:1.1.31@aar'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.10'
+    compile 'com.github.ViksaaSkool:AwesomeSplash:v1.0.0'
     testCompile 'junit:junit:4.12'
 
 }

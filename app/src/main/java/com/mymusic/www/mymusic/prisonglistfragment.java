@@ -99,7 +99,7 @@ ListView lv;
         Intent intent=new Intent("songstarted");
         intent.putExtra("message","load");
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
-        
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
